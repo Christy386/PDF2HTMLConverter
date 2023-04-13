@@ -7,8 +7,6 @@ const app = express();
 // Define a route that receives parameters in the URL
 app.get('/pdf/', (req, res) => {
 
-    const name = req.query.name;
-    const age = req.query.age;
     const pedidoId = req.query.pedidoId;
     const pedidoNome = req.query.pedidoNome;
     const usuario = req.query.usuario;
@@ -19,19 +17,26 @@ app.get('/pdf/', (req, res) => {
     const material = req.query.material;
     const cor = req.query.cor;
     const quantidade = req.query.quantidade;
-    const list = req.query.quantidade
-    
+    var list = '';
+    var listSplited = req.query.list.split(' ');
+    var listMaped = listSplited.map((element) => {
 
-    
+        if (element != '') {
+            list = list + `<div class="fileName">${element}</div>`;
+        }
+    });
+
+
+
     // Define the HTML that you want to convert to PDF
-    qr.toDataURL(name, { errorCorrectionLevel: 'H' }, function(err, qrCodeDataUrl) {
+    qr.toDataURL(pedidoId, { errorCorrectionLevel: 'H' }, function(err, qrCodeDataUrl) {
         if (err) {
-          console.log(err);
-          return res.status(500).send('Error generating QR code');
+            console.log(err);
+            return res.status(500).send('Error generating QR code');
         }
         //console.log()
         //qrURL = qrCodeDataUrl;
-    
+
         const html = `
             <html>
             <head>
@@ -67,7 +72,8 @@ app.get('/pdf/', (req, res) => {
                     margin-bottom: 5px;
                 }
                 .info{
-                    max-width: 120px;
+                    font-size: 8px;
+                    max-width: 170px;
                 }
                 .tableTitle{
                     background-color: #000;
@@ -90,7 +96,7 @@ app.get('/pdf/', (req, res) => {
                 </style>
                 
     
-                <title>${name}'s PDF Document</title>
+                <title>${pedidoNome}'s PDF Document</title>
             </head>
             <body>
                 <div>
@@ -113,6 +119,7 @@ app.get('/pdf/', (req, res) => {
                             <b>SOLICITAÇÃO Nº ${pedidoId} - ${pedidoNome}</b>
                         </div>
                     </div>
+                    
                     <div class="info">
                         <b>Solicitante: </b><mark>${usuario}</mark>
                     </div>
@@ -121,19 +128,21 @@ app.get('/pdf/', (req, res) => {
                     </div>
                     <div class="info">
                         <b>Solicitação: </b>${dataIn}
+                    </div >
+                    <div class="info">
                         <b>  Finalização: </b>${dataOut}
-                    </div class="info">
-                    <div>
+                    </div >
+                    <div class="info">
                         <b>Tipo de impressão: </b>${tipo}
                     </div>
-                    <div>
+                    <div class="info">
                         <b>Material: </b> ${material} - ${cor}
                     </div>
                     
                     <div class="tableTitle">
                         
                         <a class="titleText" >
-                            ${quantidade} Modelos - Nº ${pedidoId} - ${pedidoNome} .
+                            ${quantidade} Modelos - Nº ${pedidoId} - ${pedidoNome}
                         </a>
                     </div>
                     <div>
@@ -164,9 +173,9 @@ app.get('/pdf/', (req, res) => {
                 return res.status(500).send('Error generating PDF');
             }
 
-        // Set the Content-Disposition header to display the PDF in the browser
+            // Set the Content-Disposition header to display the PDF in the browser
             // and include the filename parameter to set the name of the PDF in the title of the browser window
-            res.set('Content-Disposition', `inline; filename=${name}.pdf`);
+            res.set('Content-Disposition', `inline; filename=${pedidoNome}.pdf`);
 
             // Set the Content-Type header to 'application/pdf'
             res.set('Content-Type', 'application/pdf');
@@ -177,7 +186,7 @@ app.get('/pdf/', (req, res) => {
     });
 });
 
-    // Start the server
+// Start the server
 app.listen(3000, () => {
     console.log('Server started on port 3000');
 });
