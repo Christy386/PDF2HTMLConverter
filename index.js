@@ -45,26 +45,39 @@ app.get('/pdf/', (req, res) => {
                     margin: 50px;
                 }
                 body{
-                    font-family: Helvetica;
+                    font-family: Helvetica, sans-serif;
                     font-size: 8px;
                 }
                 div{
                     margin:0;
                 }
                 mark{
-                    font-size: 10px;
+                    font-size: 8px;
+                }
+                .cabecalho{
+                    height:200px; 
+                }
+                
+                .logoImg{
+                    position:fixed; 
+                    margin-left: 0px; 
+                    margin-top: 0px;
+                    width: 130px;
+                }
+                .endereco{
+                    font-size: 6px;
                 }
                 .qrcodeDiv{
                     position:fixed; 
                     margin-left: 170px; 
-                    margin-top: 15px;
+                    margin-top: 40px;
                 }
                 .qrcodeImg{
                     width:80px; 
                     height:80px;
                 }
                 .solicitationInfo{
-                    margin-top: 5px;
+                    margin-top: 25px;
                     
                 }
                 .soliInfoTitle{
@@ -83,7 +96,12 @@ app.get('/pdf/', (req, res) => {
                 .titleText{
                     color: #fff;
                     margin-left: 2px;
-                    font-size: 11px;
+                    font-size: 8px;
+                }
+                .productNumberText{
+                    color: #fff;
+                    margin-left: 2px;
+                    font-size: 10px;
                 }
                 .fileName{
                     #background-color: #aaa;
@@ -99,9 +117,9 @@ app.get('/pdf/', (req, res) => {
                 <title>${pedidoNome}'s PDF Document</title>
             </head>
             <body>
-                <div>
-                    <div>
-                        <img src="http://www.labpronto.com.br/hub/blue.png" align="left" style="width: 80px;">
+                <div class="cabecalho">
+                    <div >
+                        <img src="http://www.labpronto.com.br/hub/blue.png" class="logoImg">
                     <div>
                     <div class="endereco" align="right">
                         <div><b>CNPJ:</b> 37.605.824/0001-03</div>
@@ -142,7 +160,13 @@ app.get('/pdf/', (req, res) => {
                     <div class="tableTitle">
                         
                         <a class="titleText" >
-                            ${quantidade} Modelos - Nº ${pedidoId} - ${pedidoNome}
+                            ${quantidade} Modelos - 
+                        </a>
+                        <a class="productNumberText" > 
+                            Nº ${pedidoId}
+                        </a>
+                        <a class="titleText" >
+                            - ${pedidoNome}
                         </a>
                     </div>
                     <div>
