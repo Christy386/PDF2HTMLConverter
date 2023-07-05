@@ -17,16 +17,53 @@ app.get('/pdf/', (req, res) => {
     const material = req.query.material;
     const cor = req.query.cor;
     const quantidade = req.query.quantidade;
-    var list = '';
-    var listSplited = req.query.list.split(' ');
-    var listMaped = listSplited.map((element) => {
+    var tagList = '';
+    var listSplited = req.query.list.split(pedidoId+'_');
+    var addPlanInNext = false;
+    var listMaped = listSplited.map((element, i) => {
 
         if (element != '') {
-            list = list + `<div class="fileName">${element}</div>`;
+            let prefixStr = '';
+            if(addPlanInNext == true){
+                addPlanInNext = false;
+                prefixStr = 'Plan-'
+            }
+            if(element.indexOf('Plan-') > -1){
+                element = element.replace(' Plan-', '');
+                addPlanInNext = true;
+            }
+            if (element != '') {
+                tagList = tagList + `<div class="fileName">${prefixStr+pedidoId+'_'+element}</div>
+                `;
+            }
+            
         }
     });
+    var tagListSplited = tagList.split('\n')
+    console.log(tagListSplited);
 
-
+    var tableTitle = `
+    <div class="tableTitle">
+                        
+        <a class="titleText" >
+            ${quantidade} Modelos - 
+        </a>
+        <a class="productNumberText" > 
+            Nº ${pedidoId}
+        </a>
+        <a class="titleText" >
+            - ${pedidoNome}
+        </a>
+    </div>
+    `
+    var tagListWithTableTitle = '';
+    tagListSplited.map((element, i) => {
+        if(i == 12 || i == 0){
+            tagListWithTableTitle = tagListWithTableTitle + tableTitle + element;
+        }else{
+            tagListWithTableTitle = tagListWithTableTitle + element;
+        }
+    })
 
     // Define the HTML that you want to convert to PDF
     qr.toDataURL(pedidoId, { errorCorrectionLevel: 'H' }, function(err, qrCodeDataUrl) {
@@ -90,7 +127,7 @@ app.get('/pdf/', (req, res) => {
                 }
                 .tableTitle{
                     background-color: #000;
-                    margin-top: 10px; 
+                    margin-top: 20px; 
                     margin-bottom: 10px;
                 }
                 .titleText{
@@ -156,21 +193,8 @@ app.get('/pdf/', (req, res) => {
                     <div class="info">
                         <b>Material: </b> ${material} - ${cor}
                     </div>
-                    
-                    <div class="tableTitle">
-                        
-                        <a class="titleText" >
-                            ${quantidade} Modelos - 
-                        </a>
-                        <a class="productNumberText" > 
-                            Nº ${pedidoId}
-                        </a>
-                        <a class="titleText" >
-                            - ${pedidoNome}
-                        </a>
-                    </div>
                     <div>
-                        ${list}
+                        ${tagListWithTableTitle}
                     </div>
                     
                 </div>
@@ -211,6 +235,6 @@ app.get('/pdf/', (req, res) => {
 });
 
 // Start the server
-app.listen(3300, () => {
+app.listen(3000, () => {
     console.log('Server started on port 3000');
 });
